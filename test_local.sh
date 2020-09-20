@@ -3,6 +3,7 @@
 set -e
 
 export AWS_DEFAULT_REGION=us-west-2
+TABLE_NAME=BPSVVUFZ
 
 kill_pid() {
   if [ -f "$1" ];then
@@ -44,7 +45,7 @@ aws dynamodb list-tables --endpoint-url http://localhost:8000
 
 # create table
 aws dynamodb create-table \
-    --table-name Table0 \
+    --table-name ${TABLE_NAME} \
     --attribute-definitions \
         AttributeName=Att0,AttributeType=S \
         AttributeName=Att1,AttributeType=S \
@@ -54,6 +55,9 @@ aws dynamodb create-table \
     --global-secondary-indexes \
         IndexName=Index1,KeySchema=[\{AttributeName=Att1,KeyType=HASH\}],Projection=\{ProjectionType=KEYS_ONLY\} \
     --billing-mode PAY_PER_REQUEST \
+    --endpoint-url http://localhost:8000
+aws dynamodb wait table-exists \
+    --table-name ${TABLE_NAME} \
     --endpoint-url http://localhost:8000
 
 cd ${MY_PATH}

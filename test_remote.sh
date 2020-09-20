@@ -3,6 +3,7 @@
 set -e
 
 export AWS_DEFAULT_REGION=us-west-2
+TABLE_NAME=BPSVVUFZ
 
 MY_PATH=${PWD}
 
@@ -21,7 +22,7 @@ aws dynamodb list-tables
 
 # create table
 aws dynamodb create-table \
-    --table-name Table0 \
+    --table-name ${TABLE_NAME} \
     --attribute-definitions \
         AttributeName=Att0,AttributeType=S \
         AttributeName=Att1,AttributeType=S \
@@ -31,15 +32,16 @@ aws dynamodb create-table \
     --global-secondary-indexes \
         IndexName=Index1,KeySchema=[\{AttributeName=Att1,KeyType=HASH\}],Projection=\{ProjectionType=KEYS_ONLY\} \
     --billing-mode PAY_PER_REQUEST
-aws dynamodb wait table-exists --table-name Table0
+aws dynamodb wait table-exists \
+    --table-name ${TABLE_NAME}
 
 # run test
 cd ${MY_PATH}
 python run.py --type remote
 
 # delete table
-aws dynamodb delete-table --table-name Table0
-aws dynamodb wait table-not-exists --table-name Table0
+aws dynamodb delete-table --table-name ${TABLE_NAME}
+aws dynamodb wait table-not-exists --table-name ${TABLE_NAME}
 
 cd ${MY_PATH}
 deactivate
