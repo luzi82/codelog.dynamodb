@@ -64,3 +64,21 @@ with table.batch_writer() as batch_writer:
 print_table()
 
 clean_table()
+
+print('=============')
+
+with table.batch_writer() as batch_writer:
+    for i in range(2):
+        for j in range(2):
+            table.put_item(Item={'Att0':f'i{i}','Att1':f'j{j}','Att2':f'k{i+j}'})
+
+table.update_item(
+    #Key={'Att0':{'S':'i0'},'Att1':{'S':'j0'}},
+    Key={'Att0':'i0','Att1':'j0'},
+    UpdateExpression='SET Att2 = :v',
+    ExpressionAttributeValues={':v':'asdf'},
+)
+
+print_table()
+
+clean_table()
