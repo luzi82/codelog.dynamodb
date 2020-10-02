@@ -44,24 +44,23 @@ with table.batch_writer() as batch_writer:
 print_table()
 
 query_ret = table.query(
-    KeyConditions={
-        'Att0':{
-            'AttributeValueList':['i0'],
-            'ComparisonOperator':'EQ',
-        }
-    },
+    KeyConditionExpression=boto3.dynamodb.conditions.Key('Att0').eq('i0')
 )
 print(query_ret)
 
 query_ret = table.query(
     IndexName='Index1',
-    KeyConditions={
-        'Att1':{
-            'AttributeValueList':['j0'],
-            'ComparisonOperator':'EQ',
-        }
-    },
+    KeyConditionExpression=boto3.dynamodb.conditions.Key('Att1').eq('j0'),
 )
 print(query_ret)
+
+clean_table()
+
+with table.batch_writer() as batch_writer:
+    for i in range(4):
+        for j in range(4):
+            table.put_item(Item={'Att0':f'i{i}','Att1':f'j{j}','Att2':f'k{i+j}'})
+
+print_table()
 
 clean_table()
